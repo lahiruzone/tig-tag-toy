@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity() {
             gameOnRun = 0
         }
         else if (winner==2) {
-            Toast.makeText(this, "Player Two Wins!!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Player Phone Wins!!", Toast.LENGTH_SHORT).show()
             gameOnRun = 0
         }
     }
