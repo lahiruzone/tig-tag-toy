@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     var playerOne = ArrayList<Int>()
     var playerTwo = ArrayList<Int>()
     var activePlayer = 1
-    var gameOnRun = 1
+    var gameOnRun = 1 //1-10 Run the game, 10=< stop running the game
 
     fun gamePlay(cellID:Int, buSelected:Button){
 
