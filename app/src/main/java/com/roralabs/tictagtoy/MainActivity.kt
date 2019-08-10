@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         buSelected.isEnabled = false
 
 
-        if(gameOnRun==1) {
+        if(gameOnRun<10) {
             if (activePlayer == 1) {
                 buSelected.text = "x"
                 buSelected.setBackgroundResource(R.color.colorblue)
@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
                 playerTwo.add(cellID)
                 activePlayer = 1
             }
+            gameOnRun++
 
             findWinner()
         }
@@ -66,32 +67,35 @@ class MainActivity : AppCompatActivity() {
 
     fun autoPlay(){
 
-        var emptyCells = ArrayList<Int>()
+        if(gameOnRun!=9){
+            var emptyCells = ArrayList<Int>()
 
-        for(cellID in 1..9){
-            if(!(playerOne.contains(cellID) || playerTwo.contains(cellID)))
-                emptyCells.add(cellID)
+            for(cellID in 1..9){
+                if(!(playerOne.contains(cellID) || playerTwo.contains(cellID)))
+                    emptyCells.add(cellID)
+            }
+
+            val r = Random
+
+            val randomIndex = r.nextInt(emptyCells.size-0)+0
+            val cellID = emptyCells[randomIndex]
+
+            var buttonSelected:Button?
+            when(cellID){
+                1->buttonSelected=but1
+                2->buttonSelected=but2
+                3->buttonSelected=but3
+                4->buttonSelected=but4
+                5->buttonSelected=but5
+                6->buttonSelected=but6
+                7->buttonSelected=but7
+                8->buttonSelected=but8
+                9->buttonSelected=but9
+                else->{buttonSelected=but1}
+            }
+
+            gamePlay(cellID, buttonSelected)
         }
-
-        val r = Random
-        val randomIndex = r.nextInt(emptyCells.size-0)+0
-        val cellID = emptyCells[randomIndex]
-
-        var buttonSelected:Button?
-        when(cellID){
-            1->buttonSelected=but1
-            2->buttonSelected=but2
-            3->buttonSelected=but3
-            4->buttonSelected=but4
-            5->buttonSelected=but5
-            6->buttonSelected=but6
-            7->buttonSelected=but7
-            8->buttonSelected=but8
-            9->buttonSelected=but9
-            else->{buttonSelected=but1}
-        }
-
-        gamePlay(cellID, buttonSelected)
     }
 
     fun findWinner(){
@@ -135,12 +139,15 @@ class MainActivity : AppCompatActivity() {
 
         if(winner==1){
             Toast.makeText(this, "Player One Wins!!", Toast.LENGTH_SHORT).show()
-            gameOnRun = 0
+            gameOnRun = 11
         }
         else if (winner==2) {
-            Toast.makeText(this, "Player Phone Wins!!", Toast.LENGTH_SHORT).show()
-            gameOnRun = 0
+            Toast.makeText(this, "Phone Wins!!", Toast.LENGTH_SHORT).show()
+            gameOnRun = 11
         }
+
+        if(gameOnRun==10)
+            Toast.makeText(this, "Game Over!!", Toast.LENGTH_LONG).show()
     }
 
 }
