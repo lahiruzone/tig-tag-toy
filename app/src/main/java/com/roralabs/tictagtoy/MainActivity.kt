@@ -9,16 +9,26 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.random.Random
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.database.FirebaseDatabase
 
 
 class MainActivity : AppCompatActivity() {
 
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
 
+    //database instance
+    var database = FirebaseDatabase.getInstance()
+    var myRef = database.reference
+
+    var myEmail:String?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        var b: Bundle? =intent.extras
+        myEmail = b!!.getString("name")
     }
 
     protected fun buClick(view:View){
@@ -152,6 +162,16 @@ class MainActivity : AppCompatActivity() {
 
         if(gameOnRun==10)
             Toast.makeText(this, "Game Over!!", Toast.LENGTH_LONG).show()
+    }
+
+    fun buttonRequestEvent(view:View){
+        var userEmail = editText.text.toString()
+        myRef.child("Users").child(userEmail).child("Request").push().setValue(myEmail)
+    }
+
+    fun buttonAcceptEvent(view:View){
+
+
     }
 
 }

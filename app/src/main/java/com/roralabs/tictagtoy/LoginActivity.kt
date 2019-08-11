@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import kotlinx.android.synthetic.main.activity_login.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.content_login.*
 
 
@@ -16,17 +17,20 @@ class LoginActivity : AppCompatActivity() {
 
     private var mAuth: FirebaseAuth? = null
 
+    //database instance
+    var database = FirebaseDatabase.getInstance()
+    var myRef = database.reference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        setSupportActionBar(toolbar)
 
         mAuth = FirebaseAuth.getInstance()
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+
+
+
+
     }
 
     fun loginEvent(view:View){
@@ -38,6 +42,11 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this){ task ->
 
                 if(task.isSuccessful){
+                    var currentUser = mAuth!!.currentUser
+                    //Add to Database
+                    if(currentUser!=null){
+                        myRef.child("Users").child(splitSring(currentUser.email.toString())).setValue(currentUser.uid)
+                    }
                     loadGame()
                 }else{
                     Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
@@ -55,12 +64,20 @@ class LoginActivity : AppCompatActivity() {
 
         if(currentUser!=null){
 
+            //save data to db
+
+
             var intent = Intent(this, MainActivity::class.java)
             intent.putExtra("name", currentUser.email)
             intent.putExtra("uid", currentUser.uid)
 
             startActivity(intent)
         }
+    }
+
+    fun splitSring(str:String) : String{
+        var split = str.split("@")
+        return split[0]
     }
 
 }
