@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Tic Tag toy</string>
+    <string name="title_activity_login">Tik Tag Online Game</string>
 </resources>

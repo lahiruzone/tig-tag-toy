@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "152335357657",
+    "firebase_url": "https://tictagtoy.firebaseio.com",
+    "project_id": "tictagtoy",
+    "storage_bucket": "tictagtoy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152335357657:android:611737b90fe580a5",
+        "android_client_info": {
+          "package_name": "com.roralabs.tictagtoy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "152335357657-80pudjir3clpfp8g1g75rr026i4puq87.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.roralabs.tictagtoy",
+            "certificate_hash": "fabfea9da5c1809c1687ede9f0067798cfa942ff"
+          }
+        },
+        {
+          "client_id": "152335357657-skulh9hhh3aetsgunr341ms7qni4mvji.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc2vy9CjOtYCEbIyd9v7Qeu87-I7eawMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "152335357657-skulh9hhh3aetsgunr341ms7qni4mvji.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
