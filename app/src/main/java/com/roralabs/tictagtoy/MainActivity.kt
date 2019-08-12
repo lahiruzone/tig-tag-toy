@@ -9,7 +9,11 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.random.Random
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
         var b: Bundle? =intent.extras
         myEmail = b!!.getString("name")
+
+        incomingRequest()
     }
 
     protected fun buClick(view:View){
@@ -47,7 +53,11 @@ class MainActivity : AppCompatActivity() {
         }
 
 //        Toast.makeText(this, "ID"+cellID, Toast.LENGTH_SHORT).show()
-        gamePlay(cellID, buSelected)
+        //Play game offline
+//        gamePlay(cellID, buSelected)
+
+        //For playing with phone
+        myRef.child("PlayerOnline").child(sessionID!!).child(cellID.toString()).setValue(myEmail)
     }
 
     var playerOne = ArrayList<Int>()
@@ -62,11 +72,12 @@ class MainActivity : AppCompatActivity() {
 
         if(gameOnRun<10) {
             if (activePlayer == 1) {
-                buSelected.text = "x"
+                buSelected.text = "X"
                 buSelected.setBackgroundResource(R.color.colorblue)
                 playerOne.add(cellID)
                 activePlayer = 2
-                autoPlay()
+
+//                autoPlay() //For playing with phone
             } else {
                 buSelected.text = "O"
                 buSelected.setBackgroundResource(R.color.colorpink)
@@ -79,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //play with phone
     fun autoPlay(){
 
         if(gameOnRun!=9){
@@ -93,6 +105,29 @@ class MainActivity : AppCompatActivity() {
 
             val randomIndex = r.nextInt(emptyCells.size-0)+0
             val cellID = emptyCells[randomIndex]
+
+            var buttonSelected:Button?
+            when(cellID){
+                1->buttonSelected=but1
+                2->buttonSelected=but2
+                3->buttonSelected=but3
+                4->buttonSelected=but4
+                5->buttonSelected=but5
+                6->buttonSelected=but6
+                7->buttonSelected=but7
+                8->buttonSelected=but8
+                9->buttonSelected=but9
+                else->{buttonSelected=but1}
+            }
+
+            gamePlay(cellID, buttonSelected)
+        }
+    }
+
+    fun autoPlayOnline(cellID: Int){
+
+        if(gameOnRun!=9){
+
 
             var buttonSelected:Button?
             when(cellID){
@@ -164,12 +199,90 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Game Over!!", Toast.LENGTH_LONG).show()
     }
 
-    fun buttonRequestEvent(view:View){
+    //When I request other to play with me
+    fun buttonRequestEvent(view:android.view.View){
         var userEmail = editText.text.toString()
-        myRef.child("Users").child(userEmail).child("Request").push().setValue(myEmail)
+        myRef.child("Users").child(splitSring(userEmail)).child("Request").push().setValue(myEmail)
+        playerOnline(splitSring(myEmail!!) + splitSring(userEmail))
+        playerSimbol="X"
     }
 
-    fun buttonAcceptEvent(view:View){
+    //When I accept to play request
+    fun buttonAcceptEvent(view:android.view.View){
+        var userEmail = editText.text.toString()
+        myRef.child("Users").child(splitSring(userEmail)).child("Request").push().setValue(myEmail)
+        playerOnline(splitSring(userEmail) + splitSring(myEmail!!))
+        playerSimbol="O"
+    }
+
+    fun splitSring(str:String) : String{
+        var split = str.split("@")
+        return split[0]
+    }
+
+    fun incomingRequest(){
+        myRef.child("Users").child(splitSring(myEmail.toString())).child("Request")
+            .addValueEventListener(object:ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    try {
+                        val td = dataSnapshot.value as HashMap<String, Any>
+                        if(td!=null){
+
+                            var value:String
+                            for(key in td.keys){
+                                value = td[key] as String
+                                editText.setText(value)
+                                myRef.child("Users").child(splitSring(myEmail!!)).child("Request").setValue(true)
+                                break
+                            }
+                        }
+
+                    }catch (ex:Exception){}
+                }
+            })
+    }
+
+
+    var sessionID:String?=null
+    var playerSimbol:String?=null
+
+    //Genarate session for playing two playes online
+    fun playerOnline(sessionID:String){
+
+        this.sessionID = sessionID
+        myRef.child("PlayerOnline").child(sessionID)
+            .addValueEventListener(object:ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    try{
+                        playerOne.clear()
+                        playerTwo.clear()
+                        val td = dataSnapshot.value as HashMap<String,Any>
+                        if(td!=null){
+                            var value:String
+                            for(key in td.keys){
+                                value = td[key] as String
+
+                                if(value!=myEmail){
+                                    activePlayer = if (playerSimbol==="X") 1 else 2
+                                }else{
+                                    activePlayer = if (playerSimbol==="X") 2 else 1
+                                }
+
+                                autoPlayOnline(key.toInt()) //key=butnID
+                            }
+                        }
+                    }catch (ex:Exception){}
+                }
+            })
+
 
 
     }

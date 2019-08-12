@@ -45,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
                     var currentUser = mAuth!!.currentUser
                     //Add to Database
                     if(currentUser!=null){
-                        myRef.child("Users").child(splitSring(currentUser.email.toString())).setValue(currentUser.uid)
+                        myRef.child("Users").child(splitSring(currentUser.email.toString())).child("Request").setValue(currentUser.uid)
                     }
                     loadGame()
                 }else{
